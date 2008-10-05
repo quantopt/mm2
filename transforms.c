@@ -15,7 +15,7 @@ double complex two_lens(const int d1,const int d2,const int d3,const int f1,cons
      
      n = d1*d3*(d2-f1)-d1*(d2+d3-f1)*f2+d3*f1*f2-d2*(d3-f2)*(f1-q1)-d3*f1*q1-d3*f2*q1+f1*f2*q1;
      d = d1*(d2-f1-f2)+f1*f2-(f1+f2)*q1+d2*(q1-f1);
-     return n/d;
+     return ((float) n)/d;
 }
 
   /* double complex  two_lens_crystal(d1, d2, d3, d4, f1, f2, n, r, q1) */
