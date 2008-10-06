@@ -1,7 +1,6 @@
-#include "directsolve.h"
+#include "direct_solve.h"
 #define ERROR 1
 
-double complex two_lens(int, int, int, int, int, double complex);
 
 double L1sum, L2sum, L3sum, wsum;
 double L1avg, L2avg, L3avg, wavg;
@@ -22,7 +21,7 @@ void average_solutions(double L1, double L2, double L3, double w2) {
 }
 
 
-void pso_solve(const double w1, const double w2, const double f1, const double f2,const double L) {}
+
 void direct_solve(const double w1, const double w2, const double f1, const double f2, const double L) {
 
      double L1, L2, L3,Leff, w2_calc;
@@ -58,7 +57,9 @@ void direct_solve(const double w1, const double w2, const double f1, const doubl
 
 int main(int argc, char **argv) {
      double w1, w2, f1, f2, L;
-     
+
+     printf("Hi\n"); 
+
      w1 = 200;
      w2 = 200; 
      L = 600;
