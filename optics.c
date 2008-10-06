@@ -1,5 +1,7 @@
 #include "optics.h"
- 
+
+double wavelength=0.85209000000000000; 
+
 double waist_z(const double z) {
      return sqrt(m2u(z)*wavelength/pi);
 }

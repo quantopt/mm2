@@ -7,6 +7,8 @@ double L1avg, L2avg, L3avg, wavg;
 double lower, upper;
 int count;
 
+extern double wavelength;
+
 
 void average_solutions(double L1, double L2, double L3, double w2) {
      wsum += w2;
@@ -22,7 +24,7 @@ void average_solutions(double L1, double L2, double L3, double w2) {
 
 
 
-void direct_solve(const double w1, const double w2, const double f1, const double f2, const double L) {
+void direct_solve(const double w1, const double w2, const int f1, const int f2, const double L) {
 
      double L1, L2, L3,Leff, w2_calc;
      double complex q1, q_target, q2;
@@ -30,8 +32,7 @@ void direct_solve(const double w1, const double w2, const double f1, const doubl
      q1 = q(w1);
      q_target = q(w2);
      Leff = L;
-     printf("Direct Solving...\n"); 
-
+     count = 0;
      for(L1=0; L1 < Leff; L1++) {
           for(L3=0; L3<Leff-L1; L3++) {
                L2 = Leff-L1-L3;
@@ -49,26 +50,68 @@ void direct_solve(const double w1, const double w2, const double f1, const doubl
      }
 
      if (count) {
-          printf("f1: %f   f2: %f    L1: %6.2f   L2: %6.2f  L3:  %6.2f  waist:  %6.2f um   count: %d\n", f1, f2, L1avg, L2avg, L3avg, wavg, count); 
+          printf("f1: %d   f2: %d    L1: %6.2f   L2: %6.2f  L3:  %6.2f  waist:  %6.2f um   count: %d\n", f1, f2, L1avg, L2avg, L3avg, wavg, count); 
      }
 
 }
 
 
+int load_bank(int ***bank) {
+     FILE *fp;
+     int  f1, f2, nrows, i;
+   
+     if ((fp = fopen("bank", "r"))) {
+          fscanf(fp, "%d", &nrows);
+
+          *bank = (int **)malloc(nrows * sizeof(int *));
+          for(i = 0; i < nrows; i++) {
+               (*bank)[i] = (int *)malloc(2 * sizeof(int));
+          }
+          for(i=0; i < nrows; i++) {
+               fscanf(fp, "%d %d", &f1, &f2);
+               (*bank)[i][0] = f1;
+               (*bank)[i][1] = f2;
+          }
+          fclose(fp);
+     }
+     return nrows;
+}
+
+
+
+
 int main(int argc, char **argv) {
-     double w1, w2, f1, f2, L;
-
-     printf("Hi\n"); 
-
+     double w1, w2, L;
+     int f1,f2, num,i;
+     int **bank;
+     printf("Direct Solving...\n"); 
+     num = load_bank(&bank);
+     
      w1 = 200;
      w2 = 200; 
      L = 600;
 
-     f1 = 100; f2 = 100;
-     direct_solve(w1, w2, f1, f2, L);
-
-  return 0;
+     for(i=0; i<num; i++) {
+          f1 = bank[i][0];
+          f2 = bank[i][1];
+          direct_solve(w1, w2, f1, f2, L);     
+     }
+     
+     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
         
 /*
   Test Cases:
