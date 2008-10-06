@@ -1,38 +1,21 @@
 #include "direct_solve.h"
 #define ERROR 1
 
-
-double L1sum, L2sum, L3sum, wsum;
-double L1avg, L2avg, L3avg, wavg;
-double lower, upper;
-int count;
-
 extern double wavelength;
-
-
-void average_solutions(double L1, double L2, double L3, double w2) {
-     wsum += w2;
-     L1sum += L1;
-     L2sum += L2;
-     L3sum += L3;
-     count += 1;
-     L1avg = L1sum/count;
-     L2avg = L2sum/count;
-     L3avg = L3sum/count;
-     wavg = wsum/count;
-}
-
 
 
 void direct_solve(const double w1, const double w2, const int f1, const int f2, const double L) {
 
-     double L1, L2, L3,Leff, w2_calc;
+     double L1avg, L2avg, L3avg, wavg, w2_calc, count;
+     int L1, L2, L3, Leff, L1sum, L2sum, L3sum, wsum, lower, upper;
+
+     count = lower = upper = L1sum = L2sum = L3sum = wsum = 0;
+
      double complex q1, q_target, q2;
 
      q1 = q(w1);
      q_target = q(w2);
      Leff = L;
-     count = 0;
      for(L1=0; L1 < Leff; L1++) {
           for(L3=0; L3<Leff-L1; L3++) {
                L2 = Leff-L1-L3;
@@ -42,7 +25,8 @@ void direct_solve(const double w1, const double w2, const int f1, const int f2, 
                if (eq(cimag(q2),cimag(q_target))) {
                     if ((fabs(creal(q2)) < ERROR) && eq(w2,w2_calc)) {
                          if (L1 > lower && L2 > 8 && L3 > upper ) {
-                              average_solutions(L1, L2, L3, w2_calc);
+                                   wsum += w2_calc; L1sum += L1; L2sum += L2; L3sum += L3;
+                                   count ++;
                          }
                     }
                }
@@ -50,7 +34,8 @@ void direct_solve(const double w1, const double w2, const int f1, const int f2, 
      }
 
      if (count) {
-          printf("f1: %d   f2: %d    L1: %6.2f   L2: %6.2f  L3:  %6.2f  waist:  %6.2f um   count: %d\n", f1, f2, L1avg, L2avg, L3avg, wavg, count); 
+          L1avg = L1sum/count; L2avg = L2sum/count; L3avg = L3sum/count; wavg = wsum/count;
+          printf("f1: %d   f2: %d    L1: %6.0f   L2: %6.0f  L3:  %6.0f  waist:  %6.2f um   count: %5.0f\n", f1, f2, L1avg, L2avg, L3avg, wavg, count); 
      }
 
 }
